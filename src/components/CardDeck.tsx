@@ -110,11 +110,11 @@ function InteractiveDeck({ randomize }: { randomize: boolean }) {
             ref={(el) => {
               cardRefs.current[i] = el
             }}
-            className="absolute origin-bottom cursor-grab transition-transform duration-75 active:cursor-grabbing [&.flipped_.card-inner]:[transform:rotateY(180deg)]"
+            className="absolute origin-bottom cursor-grab transition-transform duration-75 active:cursor-grabbing [&.flipped_.card-inner]:transform-[rotateY(180deg)]"
             style={{ width: size, height: size * 1.4, perspective: '1000px' }}
             onDoubleClick={(e) => e.currentTarget.classList.toggle('flipped')}
           >
-            <div className="card-inner relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d]">
+            <div className="card-inner relative h-full w-full transition-transform duration-500 transform-3d">
               {/* Front */}
               <div
                 className="absolute flex h-full w-full flex-col justify-between rounded-[10px] bg-white p-2 text-center shadow-[0_4px_12px_rgba(0,0,0,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_10px_rgba(255,255,0,0.8)] [backface-visibility:hidden]"
@@ -125,7 +125,7 @@ function InteractiveDeck({ randomize }: { randomize: boolean }) {
                   <br />
                   {suit}
                 </div>
-                <div className="flex flex-grow items-center justify-center text-4xl">
+                <div className="flex grow items-center justify-center text-4xl">
                   {suit}
                 </div>
                 <div className="rotate-180 self-end text-lg leading-none">
