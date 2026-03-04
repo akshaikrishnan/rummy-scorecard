@@ -57,6 +57,13 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 })
 
+//install sw.js
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+  })
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
