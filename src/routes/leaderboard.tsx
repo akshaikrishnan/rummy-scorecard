@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { subscribeAllTimeLeaderboard, type User } from '../lib/db'
 import { Medal, Star, Gamepad2, TrendingUp } from 'lucide-react'
+import SuitLoader from '#/components/ui/loader'
 
 export const Route = createFileRoute('/leaderboard')({
   component: LeaderboardRoute,
@@ -22,8 +23,8 @@ function LeaderboardRoute() {
 
   if (isLoading) {
     return (
-      <div className="page-wrap py-20 flex justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[var(--lagoon-deep)]"></div>
+      <div className="page-wrap py-20 min-h-[50vh] flex justify-center">
+        <SuitLoader />
       </div>
     )
   }

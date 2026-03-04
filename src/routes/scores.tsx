@@ -40,6 +40,7 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table'
+import SuitLoader from '#/components/ui/loader'
 
 export const Route = createFileRoute('/scores')({
   component: ScoresRoute,
@@ -280,8 +281,8 @@ function ScoresRoute() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center p-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[var(--palm)]"></div>
+        <div className="page-wrap py-20 min-h-[50vh] flex justify-center">
+          <SuitLoader />
         </div>
       ) : games.length === 0 ? (
         <div className="island-shell p-16 text-center rounded-[3rem]">

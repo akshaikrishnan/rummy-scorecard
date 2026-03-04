@@ -4,6 +4,7 @@ import { subscribeTodayTotalPoints, type User } from '../lib/db'
 import { Trophy, Crown, PartyPopper } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import ReactCanvasConfetti from 'react-canvas-confetti'
+import SuitLoader from '#/components/ui/loader'
 
 export const Route = createFileRoute('/total')({
   component: TotalRoute,
@@ -40,8 +41,8 @@ function TotalRoute() {
 
   if (isLoading) {
     return (
-      <div className="page-wrap py-20 flex justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[var(--lagoon-deep)]"></div>
+      <div className="page-wrap py-20 min-h-[50vh] flex justify-center">
+        <SuitLoader />
       </div>
     )
   }

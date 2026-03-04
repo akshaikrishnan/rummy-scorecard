@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from '../components/ui/form'
 import { toast } from 'sonner'
+import SuitLoader from '#/components/ui/loader'
 
 export const Route = createFileRoute('/users')({
   component: UsersRoute,
@@ -142,8 +143,8 @@ function UsersRoute() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center p-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[var(--lagoon-deep)]"></div>
+        <div className="page-wrap py-20 min-h-[50vh] flex justify-center">
+          <SuitLoader />
         </div>
       ) : users.length === 0 ? (
         <div className="text-center py-20 island-shell rounded-[2rem]">

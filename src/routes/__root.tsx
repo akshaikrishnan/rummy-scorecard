@@ -3,6 +3,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import MobileDock from '../components/MobileDock'
 import { Toaster } from '../components/ui/sonner'
 
 import appCss from '../styles.css?url'
@@ -73,9 +74,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
         <Header />
-        {children}
+        <main className="pb-20 sm:pb-0">{children}</main>
         <Toaster />
         <Footer />
+        <MobileDock />
         <TanStackDevtools
           config={{
             position: 'bottom-right',
