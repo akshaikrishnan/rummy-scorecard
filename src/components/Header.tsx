@@ -26,7 +26,7 @@ export default function Header() {
             className="nav-link"
             activeProps={{ className: 'nav-link is-active' }}
           >
-            Users
+            Players
           </Link>
           <Link
             to="/scores"

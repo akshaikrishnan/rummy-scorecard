@@ -30,7 +30,7 @@ export default function MobileDock() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden">
       <nav className="flex items-center justify-around border-t border-[var(--line)] bg-[var(--header-bg)]/90 px-2 pb-safe backdrop-blur-lg shadow-[0_-8px_32px_rgba(30,90,72,0.06)]">
-        <DockLink to="/users" icon={Users} label="Users" />
+        <DockLink to="/users" icon={Users} label="Players" />
         <DockLink to="/scores" icon={ClipboardList} label="Scores" />
         <DockLink to="/total" icon={Coins} label="Total" />
         <DockLink to="/leaderboard" icon={Trophy} label="Board" />

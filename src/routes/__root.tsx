@@ -27,10 +27,16 @@ export const Route = createRootRoute({
         name: 'description',
         content: 'Rummy Scorecard',
       },
-      {
-        name: 'og:image',
-        content: import.meta.env.VITE_OG_IMAGE,
-      },
+      { property: 'og:title', content: 'Rummy Scorecard' },
+      { property: 'og:description', content: 'Rummy Scorecard' },
+      { property: 'og:image', content: import.meta.env.VITE_OG_IMAGE },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: import.meta.env.VERCEL_URL },
+      // Twitter Card
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Rummy Scorecard' },
+      { name: 'twitter:description', content: 'Rummy Scorecard' },
+      { name: 'twitter:image', content: import.meta.env.VITE_OG_IMAGE },
     ],
     links: [
       {
