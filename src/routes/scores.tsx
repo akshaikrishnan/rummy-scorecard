@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import {
-  getGamesByDate,
+  subscribeGamesByDate,
   addGameScore,
-  getUsers,
+  subscribeUsers,
   type Game,
   type User,
 } from '../lib/db'
@@ -73,23 +73,24 @@ function ScoresRoute() {
 
   // Load setup data
   useEffect(() => {
-    async function init() {
-      const usersInfo = await getUsers()
+    const unsubscribe = subscribeUsers((usersInfo) => {
       setAllUsers(usersInfo)
-      setSelectedUserIds(usersInfo.map((u) => u.id))
-    }
-    init()
+      setSelectedUserIds((prev) => {
+        if (prev.length === 0) return usersInfo.map((u) => u.id)
+        return prev
+      })
+    })
+    return () => unsubscribe()
   }, [])
 
   // Load games when date changes
   useEffect(() => {
-    async function loadGames() {
-      setIsLoading(true)
-      const gamesInfo = await getGamesByDate(date)
+    setIsLoading(true)
+    const unsubscribe = subscribeGamesByDate(date, (gamesInfo) => {
       setGames(gamesInfo)
       setIsLoading(false)
-    }
-    loadGames()
+    })
+    return () => unsubscribe()
   }, [date])
 
   const selectedUsers = allUsers.filter((u) => selectedUserIds.includes(u.id))
@@ -118,10 +119,6 @@ function ScoresRoute() {
       toast.success('Game recorded successfully')
       setIsDrawerOpen(false)
       reset()
-
-      // Reload games
-      const newGames = await getGamesByDate(date)
-      setGames(newGames)
     } catch (error) {
       toast.error('Failed to save score')
     }

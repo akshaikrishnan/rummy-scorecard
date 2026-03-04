@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
-import { getAllTimeLeaderboard, type User } from '../lib/db'
+import { subscribeAllTimeLeaderboard, type User } from '../lib/db'
 import { Medal, Star, Gamepad2, TrendingUp } from 'lucide-react'
 
 export const Route = createFileRoute('/leaderboard')({
@@ -12,13 +12,12 @@ function LeaderboardRoute() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    async function fetchLeaderboard() {
-      setIsLoading(true)
-      const data = await getAllTimeLeaderboard()
+    setIsLoading(true)
+    const unsubscribe = subscribeAllTimeLeaderboard((data) => {
       setLeaderboard(data)
       setIsLoading(false)
-    }
-    fetchLeaderboard()
+    })
+    return () => unsubscribe()
   }, [])
 
   if (isLoading) {

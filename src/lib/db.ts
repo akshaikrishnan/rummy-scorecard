@@ -9,6 +9,8 @@ import {
   doc,
   runTransaction,
   increment,
+  onSnapshot,
+  type Unsubscribe,
 } from 'firebase/firestore'
 
 export type User = {
@@ -45,6 +47,18 @@ export async function getUsers(): Promise<User[]> {
   })) as User[]
 }
 
+export function subscribeUsers(callback: (users: User[]) => void): Unsubscribe {
+  const usersRef = collection(db, USERS_COLLECTION)
+  const q = query(usersRef, orderBy('name', 'asc'))
+  return onSnapshot(q, (snapshot) => {
+    const users = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as User[]
+    callback(users)
+  })
+}
+
 export async function addUser(
   name: string,
   imageUrl?: string,
@@ -73,6 +87,26 @@ export async function getGamesByDate(date: Date): Promise<Game[]> {
     id: doc.id,
     ...doc.data(),
   })) as Game[]
+}
+
+export function subscribeGamesByDate(
+  date: Date,
+  callback: (games: Game[]) => void,
+): Unsubscribe {
+  const dateString = date.toISOString().split('T')[0]
+  const gamesRef = collection(db, GAMES_COLLECTION)
+  const q = query(
+    gamesRef,
+    where('date', '==', dateString),
+    orderBy('gameNumber', 'asc'),
+  )
+  return onSnapshot(q, (snapshot) => {
+    const games = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Game[]
+    callback(games)
+  })
 }
 
 export async function addGameScore(
@@ -137,6 +171,39 @@ export async function getTodayTotalPoints(
   return result.sort((a, b) => a.points - b.points)
 }
 
+export function subscribeTodayTotalPoints(
+  date: Date,
+  callback: (data: { user: User; points: number }[]) => void,
+): Unsubscribe {
+  const dateString = date.toISOString().split('T')[0]
+  const gamesRef = collection(db, GAMES_COLLECTION)
+  const q = query(gamesRef, where('date', '==', dateString))
+
+  return onSnapshot(q, async (gamesSnapshot) => {
+    const userPoints: Record<string, number> = {}
+
+    gamesSnapshot.forEach((doc) => {
+      const game = doc.data() as Game
+      game.scores.forEach((score) => {
+        userPoints[score.userId] =
+          (userPoints[score.userId] || 0) + score.points
+      })
+    })
+
+    const users = await getUsers()
+    const result: { user: User; points: number }[] = []
+
+    for (const [userId, points] of Object.entries(userPoints)) {
+      const user = users.find((u) => u.id === userId)
+      if (user) {
+        result.push({ user, points })
+      }
+    }
+
+    callback(result.sort((a, b) => a.points - b.points))
+  })
+}
+
 export async function getAllTimeLeaderboard(): Promise<User[]> {
   const users = await getUsers()
   return users.sort((a, b) => {
@@ -144,5 +211,19 @@ export async function getAllTimeLeaderboard(): Promise<User[]> {
       return a.gamesPlayed - b.gamesPlayed
     }
     return a.totalPoints - b.totalPoints
+  })
+}
+
+export function subscribeAllTimeLeaderboard(
+  callback: (users: User[]) => void,
+): Unsubscribe {
+  return subscribeUsers((users) => {
+    const sorted = [...users].sort((a, b) => {
+      if (a.totalPoints === b.totalPoints) {
+        return a.gamesPlayed - b.gamesPlayed
+      }
+      return a.totalPoints - b.totalPoints
+    })
+    callback(sorted)
   })
 }

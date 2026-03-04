@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
-import { getUsers, addUser, type User } from '../lib/db'
+import { subscribeUsers, addUser, type User } from '../lib/db'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -47,15 +47,13 @@ function UsersRoute() {
     },
   })
 
-  async function loadUsers() {
-    setIsLoading(true)
-    const fetchedUsers = await getUsers()
-    setUsers(fetchedUsers)
-    setIsLoading(false)
-  }
-
   useEffect(() => {
-    loadUsers()
+    setIsLoading(true)
+    const unsubscribe = subscribeUsers((fetchedUsers) => {
+      setUsers(fetchedUsers)
+      setIsLoading(false)
+    })
+    return () => unsubscribe()
   }, [])
 
   async function onSubmit(values: z.infer<typeof userSchema>) {
@@ -64,7 +62,6 @@ function UsersRoute() {
       toast.success('Player added successfully')
       setIsOpen(false)
       form.reset()
-      loadUsers()
     } catch (error) {
       toast.error('Failed to add player')
     }

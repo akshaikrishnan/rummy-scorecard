@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
-import { getTodayTotalPoints, type User } from '../lib/db'
+import { subscribeTodayTotalPoints, type User } from '../lib/db'
 import { Trophy, Crown, PartyPopper } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import ReactCanvasConfetti from 'react-canvas-confetti'
@@ -17,13 +17,12 @@ function TotalRoute() {
   const [winnerDeclared, setWinnerDeclared] = useState(false)
 
   useEffect(() => {
-    async function fetchStandings() {
-      setIsLoading(true)
-      const data = await getTodayTotalPoints(new Date())
+    setIsLoading(true)
+    const unsubscribe = subscribeTodayTotalPoints(new Date(), (data) => {
       setStandings(data)
       setIsLoading(false)
-    }
-    fetchStandings()
+    })
+    return () => unsubscribe()
   }, [])
 
   const handleDeclareWinner = () => {
