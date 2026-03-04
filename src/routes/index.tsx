@@ -1,10 +1,12 @@
 import InteractiveDeck from '#/components/CardDeck'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/')({ component: App })
 
 // --- Main App Component ---
 function App() {
+  const [isRummyHover, setIsRummyHover] = useState(false)
   return (
     <main className="page-wrap px-4 pb-8 pt-14">
       {/* Hero Section modified into a 2-column grid */}
@@ -14,10 +16,14 @@ function App() {
         <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
 
         {/* Left Column: Text */}
-        <div className="relative z-10">
+        <div
+          className="relative z-10"
+          onMouseEnter={() => setIsRummyHover(true)}
+          onMouseLeave={() => setIsRummyHover(false)}
+        >
           <p className="island-kicker mb-3">Family Game Night</p>
           <h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.02] font-bold tracking-tight text-[var(--sea-ink)] sm:text-6xl lg:text-5xl xl:text-6xl">
-            Rummy Scorecard
+            Rummy Sc<span className="text-red-500">♦</span>recard
           </h1>
           <p className="mb-8 max-w-xl text-base text-[var(--sea-ink-soft)] sm:text-lg">
             Track your family's Rummy card game scores easily. Add players,
@@ -41,7 +47,7 @@ function App() {
 
         {/* Right Column: Deck Integration */}
         <div className="relative z-10 h-[450px] w-full min-w-[300px] shadow-2xl rounded-2xl">
-          <InteractiveDeck />
+          <InteractiveDeck randomize={isRummyHover} />
         </div>
       </section>
 

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import gsap from 'gsap'
-import { Draggable } from 'gsap/Draggable'
+import { Draggable } from 'gsap/all'
 import { useCountdown } from 'hooks/useCountdown'
 
 // Register GSAP Plugin
@@ -41,6 +41,7 @@ function InteractiveDeck({ randomize }: { randomize: boolean }) {
           type: 'x,y',
           edgeResistance: 0.65,
           bounds: deckRef.current,
+          onDragStart: () => restart(2),
         })
       })
     }, deckRef)
@@ -89,12 +90,16 @@ function InteractiveDeck({ randomize }: { randomize: boolean }) {
   useEffect(() => {
     if (randomize) {
       handleRandomize()
+      restart(2)
     }
   }, [randomize])
   return (
     <div className="flex h-full w-full overflow-hidden rounded-2xl bg-[#2e2e2e] font-sans shadow-inner">
       {/* Deck Area */}
-
+      {/* <span className="text-white">
+        {seconds}
+        {isRunning ? 'Running' : 'Paused'}
+      </span> */}
       <div
         ref={deckRef}
         className="relative flex h-full flex-1 items-center justify-center"
@@ -102,13 +107,12 @@ function InteractiveDeck({ randomize }: { randomize: boolean }) {
         {faces.map((face, i) => (
           <div
             key={face}
-            ref={(el) => (cardRefs.current[i] = el)}
+            ref={(el) => {
+              cardRefs.current[i] = el
+            }}
             className="absolute origin-bottom cursor-grab transition-transform duration-75 active:cursor-grabbing [&.flipped_.card-inner]:[transform:rotateY(180deg)]"
             style={{ width: size, height: size * 1.4, perspective: '1000px' }}
             onDoubleClick={(e) => e.currentTarget.classList.toggle('flipped')}
-            onClick={() => {
-              restart(2)
-            }}
           >
             <div className="card-inner relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d]">
               {/* Front */}
