@@ -5,7 +5,16 @@ type CardResult = 'hidden' | 'miss' | 'jackpot'
 
 const CARD_COUNT = 12
 
-const decoyCards = ['🂡', '🂮', '🂽', '🃍', '🃁', '🃞']
+const decoyCards = [
+  { face: 'A', suit: '♠', color: '#171717' },
+  { face: 'K', suit: '♠', color: '#171717' },
+  { face: 'Q', suit: '♠', color: '#171717' },
+  { face: 'J', suit: '♦', color: '#ef4444' },
+  { face: 'A', suit: '♥', color: '#ef4444' },
+  { face: '10', suit: '♣', color: '#171717' },
+]
+
+const jokerCard = { face: '★', suit: '🃏', color: '#10b981' }
 
 export default function NotFoundGame() {
   const [round, setRound] = useState(0)
@@ -79,9 +88,9 @@ export default function NotFoundGame() {
           {Array.from({ length: CARD_COUNT }, (_, index) => {
             const state = revealed[index] ?? 'hidden'
             const isHidden = state === 'hidden'
-            const cardFace =
+            const cardData =
               state === 'jackpot'
-                ? '🃏'
+                ? jokerCard
                 : decoyCards[(index + round) % decoyCards.length]
 
             return (
@@ -89,26 +98,44 @@ export default function NotFoundGame() {
                 key={`card-${round}-${index}`}
                 type="button"
                 onClick={() => handleCardPick(index)}
-                className="group aspect-3/4 rounded-2xl border border-(--line) p-0 transition hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lagoon)] disabled:cursor-default"
+                className="group aspect-3/4 rounded-[10px] bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--lagoon)] disabled:cursor-default perspective-[1000px]"
                 disabled={!isHidden || foundJoker}
                 aria-label={
-                  isHidden ? `Pick card ${index + 1}` : `Revealed ${cardFace}`
+                  isHidden
+                    ? `Pick card ${index + 1}`
+                    : `Revealed ${cardData.face} of ${cardData.suit}`
                 }
               >
                 <div
-                  className={`flex h-full items-center justify-center rounded-2xl text-3xl shadow-sm transition sm:text-4xl ${
-                    isHidden
-                      ? 'bg-[linear-gradient(145deg,rgba(50,143,151,0.8),rgba(23,58,64,0.95))] text-white group-hover:brightness-110 '
-                      : state === 'jackpot'
-                        ? 'bg-[linear-gradient(145deg,rgba(45,181,125,0.45),rgba(24,110,77,0.85))] text-white text-9xl '
-                        : 'bg-(--surface-strong) text-(--sea-ink)'
-                  }`}
+                  className={`card-inner relative h-full w-full transition-transform duration-500 transform-3d ${isHidden ? 'transform-[rotateY(180deg)]' : ''}`}
                 >
-                  {isHidden ? (
-                    '♦'
-                  ) : (
-                    <span className="text-9xl">{cardFace}</span>
-                  )}
+                  {/* Front */}
+                  <div
+                    className="absolute flex h-full w-full flex-col justify-between rounded-[10px] bg-white p-2 text-center shadow-[0_4px_12px_rgba(0,0,0,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_10px_rgba(255,255,0,0.8)] backface-hidden"
+                    style={{ color: cardData.color }}
+                  >
+                    <div className="self-start text-lg leading-none font-bold">
+                      {cardData.face}
+                      <br />
+                      {cardData.suit}
+                    </div>
+                    <div className="flex grow items-center justify-center text-4xl">
+                      {cardData.suit}
+                    </div>
+                    <div className="rotate-180 self-end text-lg leading-none font-bold">
+                      {cardData.face}
+                      <br />
+                      {cardData.suit}
+                    </div>
+                  </div>
+                  {/* Back */}
+                  <div
+                    className="absolute h-full w-full rounded-[10px] shadow-[0_4px_12px_rgba(0,0,0,0.3)] transition-shadow hover:shadow-[0_0_10px_rgba(255,255,0,0.8)] backface-hidden transform-[rotateY(180deg)]"
+                    style={{
+                      background:
+                        'repeating-linear-gradient(45deg, #555, #555 10px, #333 10px, #333 20px)',
+                    }}
+                  />
                 </div>
               </button>
             )
