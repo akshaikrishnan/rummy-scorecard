@@ -47,10 +47,16 @@ export const Route = createFileRoute('/scores')({
 
 const scoreSchema = z
   .record(z.string(), z.coerce.number().min(0, 'Min 0').max(80, 'Max 80'))
-  .refine((data) => {
-    const values = Object.values(data)
-    return values.filter((v) => v === 0).length === 1
-  }, 'Exactly one player must have 0 points (the winner)')
+  .refine(
+    (data) => {
+      const values = Object.values(data)
+      return values.some((v) => v === 0)
+    },
+    {
+      message: 'At least one player must have 0 points (the winner)',
+      path: ['root'],
+    },
+  )
 
 function ScoresRoute() {
   const [date, setDate] = useState<Date>(new Date())
