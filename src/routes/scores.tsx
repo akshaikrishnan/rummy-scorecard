@@ -209,7 +209,7 @@ function ScoresRoute() {
             <DrawerTrigger asChild>
               <Button
                 size="icon"
-                className="fixed bottom-6 right-6 z-20 h-14 w-14 rounded-full bg-[var(--palm)] shadow-lg hover:bg-[var(--lagoon)] transition-all md:hidden"
+                className="fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-[60] h-14 w-14 rounded-full bg-[var(--palm)] shadow-lg hover:bg-[var(--lagoon)] transition-all sm:bottom-6 md:hidden"
                 aria-label="Add Score"
               >
                 <Plus className="h-6 w-6" />
