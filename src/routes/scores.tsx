@@ -138,7 +138,7 @@ function ScoresRoute() {
         onClick={() => setIsDrawerOpen(true)}
         className="fixed bottom-24 right-6 z-50 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--palm)] text-white shadow-2xl hover:bg-[var(--lagoon)] transition-all sm:hidden p-0"
       >
-        <Plus className="h-8 w-8" />
+        <Plus className="h-12 w-12" strokeWidth={2.5} />
       </Button>
       <div className="page-wrap py-8 pb-32 rise-in">
         <div className="flex flex-col gap-6 mb-8">
