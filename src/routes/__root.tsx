@@ -22,11 +22,35 @@ export const Route = createRootRoute({
       {
         title: 'Rummy Scorecard',
       },
+      {
+        name: 'description',
+        content: 'Rummy Scorecard',
+      },
+      {
+        name: 'og:image',
+        content: import.meta.env.VITE_OG_IMAGE,
+      },
     ],
     links: [
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+      {
+        rel: 'manifest',
+        href: '/manifest.json',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '192x192',
+        href: '/icon192.png',
+      },
+      {
+        rel: 'icon',
+        type: 'image/png',
+        sizes: '512x512',
+        href: '/icon512.png',
       },
     ],
   }),
