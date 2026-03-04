@@ -197,86 +197,97 @@ function ScoresRoute() {
           </Popover>
 
           {/* Add Score Drawer Trigger */}
-          <div className="ml-auto">
-            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+          <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+            <div className="ml-auto hidden md:block">
               <DrawerTrigger asChild>
                 <Button className="rounded-full px-6 bg-[var(--palm)] hover:bg-[var(--lagoon)] transition-all">
                   <Plus className="mr-2 h-4 w-4" /> Add Score
                 </Button>
               </DrawerTrigger>
-              <DrawerContent>
-                <div className="mx-auto w-full max-w-sm">
-                  <DrawerHeader>
-                    <DrawerTitle className="font-display text-2xl">
-                      Record Game {games.length + 1}
-                    </DrawerTitle>
-                  </DrawerHeader>
-                  <form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="p-4 pb-0 space-y-4"
-                  >
-                    {errors.root && (
-                      <p className="text-red-500 text-sm font-bold">
-                        {errors.root.message}
-                      </p>
-                    )}
+            </div>
 
-                    {selectedUsers.length < 2 && (
-                      <p className="text-amber-600 bg-amber-50 p-3 rounded-lg text-sm font-semibold">
-                        Please select at least 2 players from the filter before
-                        adding a score.
-                      </p>
-                    )}
+            <DrawerTrigger asChild>
+              <Button
+                size="icon"
+                className="fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-[60] h-14 w-14 rounded-full bg-[var(--palm)] shadow-lg hover:bg-[var(--lagoon)] transition-all sm:bottom-6 md:hidden"
+                aria-label="Add Score"
+              >
+                <Plus className="h-6 w-6" />
+              </Button>
+            </DrawerTrigger>
 
-                    {selectedUsers.map((user) => (
-                      <div
-                        key={user.id}
-                        className="flex items-center justify-between border-b pb-4"
+            <DrawerContent>
+              <div className="mx-auto w-full max-w-sm">
+                <DrawerHeader>
+                  <DrawerTitle className="font-display text-2xl">
+                    Record Game {games.length + 1}
+                  </DrawerTitle>
+                </DrawerHeader>
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="p-4 pb-0 space-y-4"
+                >
+                  {errors.root && (
+                    <p className="text-red-500 text-sm font-bold">
+                      {errors.root.message}
+                    </p>
+                  )}
+
+                  {selectedUsers.length < 2 && (
+                    <p className="text-amber-600 bg-amber-50 p-3 rounded-lg text-sm font-semibold">
+                      Please select at least 2 players from the filter before
+                      adding a score.
+                    </p>
+                  )}
+
+                  {selectedUsers.map((user) => (
+                    <div
+                      key={user.id}
+                      className="flex items-center justify-between border-b pb-4"
+                    >
+                      <Label
+                        htmlFor={`score-${user.id}`}
+                        className="text-lg flex items-center gap-2"
                       >
-                        <Label
-                          htmlFor={`score-${user.id}`}
-                          className="text-lg flex items-center gap-2"
-                        >
-                          {user.imageUrl ? (
-                            <img
-                              src={user.imageUrl}
-                              className="w-8 h-8 rounded-full border border-gray-200"
-                              alt={user.name}
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-[var(--line)] flex items-center justify-center font-bold">
-                              {user.name.charAt(0)}
-                            </div>
-                          )}
-                          {user.name}
-                        </Label>
-                        <div className="w-24">
-                          <Input
-                            id={`score-${user.id}`}
-                            type="number"
-                            min="0"
-                            max="80"
-                            className="text-center font-bold text-lg rounded-xl focus-visible:ring-[var(--palm)]"
-                            {...register(user.id, { valueAsNumber: true })}
+                        {user.imageUrl ? (
+                          <img
+                            src={user.imageUrl}
+                            className="w-8 h-8 rounded-full border border-gray-200"
+                            alt={user.name}
                           />
-                        </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-[var(--line)] flex items-center justify-center font-bold">
+                            {user.name.charAt(0)}
+                          </div>
+                        )}
+                        {user.name}
+                      </Label>
+                      <div className="w-24">
+                        <Input
+                          id={`score-${user.id}`}
+                          type="number"
+                          min="0"
+                          max="80"
+                          className="text-center font-bold text-lg rounded-xl focus-visible:ring-[var(--palm)]"
+                          {...register(user.id, { valueAsNumber: true })}
+                        />
                       </div>
-                    ))}
+                    </div>
+                  ))}
 
-                    <DrawerFooter>
-                      <Button
-                        type="submit"
-                        className="rounded-full py-6 text-lg tracking-wide"
-                        disabled={isSubmitting || selectedUsers.length < 2}
-                      >
-                        {isSubmitting ? 'Saving...' : 'Save Game Scores'}
-                      </Button>
-                    </DrawerFooter>
-                  </form>
-                </div>
-              </DrawerContent>
-            </Drawer>
-          </div>
+                  <DrawerFooter>
+                    <Button
+                      type="submit"
+                      className="rounded-full py-6 text-lg tracking-wide"
+                      disabled={isSubmitting || selectedUsers.length < 2}
+                    >
+                      {isSubmitting ? 'Saving...' : 'Save Game Scores'}
+                    </Button>
+                  </DrawerFooter>
+                </form>
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
       </div>
 
