@@ -5,6 +5,7 @@ import Footer from '../components/Footer'
 import Header from '../components/Header'
 import MobileDock from '../components/MobileDock'
 import { Toaster } from '../components/ui/sonner'
+import NotFoundGame from '../components/NotFoundGame'
 
 import appCss from '../styles.css?url'
 
@@ -62,6 +63,7 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFoundGame,
 })
 
 //install sw.js
