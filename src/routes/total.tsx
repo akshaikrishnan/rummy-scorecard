@@ -1,9 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { subscribeTodayTotalPoints, type User } from '../lib/db'
-import { Trophy, Crown, PartyPopper } from 'lucide-react'
+import { Trophy, Crown, PartyPopper, Sparkles } from 'lucide-react'
 import { Button } from '../components/ui/button'
 import ReactCanvasConfetti from 'react-canvas-confetti'
+import { AnimatePresence, motion } from 'framer-motion'
 import SuitLoader from '#/components/ui/loader'
 
 export const Route = createFileRoute('/total')({
@@ -16,6 +17,9 @@ function TotalRoute() {
   )
   const [isLoading, setIsLoading] = useState(true)
   const [winnerDeclared, setWinnerDeclared] = useState(false)
+  const confettiRef = useRef<
+    ((options: Record<string, unknown>) => void) | null
+  >(null)
 
   useEffect(() => {
     setIsLoading(true)
@@ -27,17 +31,51 @@ function TotalRoute() {
   }, [])
 
   const handleDeclareWinner = () => {
-    setWinnerDeclared(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.setTimeout(() => {
+      setWinnerDeclared(true)
+    }, 450)
   }
 
-  const fireConfetti = () => {
-    return {
-      particleCount: 250,
-      spread: 120,
-      origin: { y: 0.6 },
-      colors: ['#2f6a4a', '#4fb8b2', '#facc15', '#f87171', '#c084fc'],
+  useEffect(() => {
+    if (!winnerDeclared || !confettiRef.current) return
+
+    const shoot = (
+      particleRatio: number,
+      options: Record<string, unknown> = {},
+    ) => {
+      confettiRef.current?.({
+        origin: { y: 0.55 },
+        colors: ['#4fb8b2', '#facc15', '#f87171', '#c084fc', '#22c55e'],
+        ...options,
+        particleCount: Math.floor(300 * particleRatio),
+      })
     }
-  }
+
+    shoot(0.3, { spread: 35, startVelocity: 60 })
+    shoot(0.25, { spread: 80, decay: 0.92, scalar: 0.9 })
+    shoot(0.25, { spread: 120, startVelocity: 48 })
+    shoot(0.2, { spread: 150, decay: 0.9, scalar: 1.2 })
+
+    const interval = window.setInterval(() => {
+      confettiRef.current?.({
+        particleCount: 55,
+        spread: 100,
+        startVelocity: 40,
+        origin: { x: Math.random(), y: Math.random() * 0.25 + 0.15 },
+        colors: ['#4fb8b2', '#facc15', '#f87171', '#c084fc', '#22c55e'],
+      })
+    }, 220)
+
+    const stopTimer = window.setTimeout(() => {
+      window.clearInterval(interval)
+    }, 3200)
+
+    return () => {
+      window.clearInterval(interval)
+      window.clearTimeout(stopTimer)
+    }
+  }, [winnerDeclared])
 
   if (isLoading) {
     return (
@@ -69,39 +107,89 @@ function TotalRoute() {
   const isTie = winners.length > 1
 
   return (
-    <div className="page-wrap py-12 pb-32 min-h-[85vh] flex flex-col items-center rise-in relative">
-      {winnerDeclared && (
-        <ReactCanvasConfetti
-          {...fireConfetti()}
-          style={{
-            position: 'fixed',
-            pointerEvents: 'none',
-            width: '100%',
-            height: '100%',
-            top: 0,
-            left: 0,
-            zIndex: 100,
-          }}
-        />
-      )}
+    <div className="page-wrap py-12 pb-32 min-h-[85vh] flex flex-col items-center rise-in relative overflow-hidden">
+      <ReactCanvasConfetti
+        onInit={({ confetti }) => {
+          confettiRef.current = confetti
+        }}
+        style={{
+          position: 'fixed',
+          pointerEvents: 'none',
+          width: '100%',
+          height: '100%',
+          top: 0,
+          left: 0,
+          zIndex: 100,
+        }}
+      />
 
-      <h1 className="text-5xl md:text-6xl font-display font-black mb-12 text-[var(--sea-ink)] drop-shadow-sm flex items-center gap-4 text-center">
+      <AnimatePresence>
+        {winnerDeclared && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none fixed inset-0 z-40"
+          >
+            <motion.div
+              className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.24),transparent_52%)]"
+              animate={{ opacity: [0.2, 0.75, 0.25] }}
+              transition={{ duration: 1.1, repeat: 3 }}
+            />
+            {[...Array(20)].map((_, idx) => (
+              <motion.div
+                key={`spark-${idx}`}
+                className="absolute text-3xl"
+                style={{
+                  left: `${(idx * 37) % 100}%`,
+                  top: `${(idx * 53) % 70}%`,
+                }}
+                initial={{ y: -30, opacity: 0 }}
+                animate={{
+                  y: [0, -20, 25],
+                  opacity: [0, 1, 0],
+                  rotate: [0, 20, -20],
+                }}
+                transition={{
+                  duration: 1.8,
+                  repeat: 2,
+                  delay: (idx % 5) * 0.08,
+                }}
+              >
+                {idx % 2 === 0 ? '✨' : '🎉'}
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <h1 className="text-5xl md:text-6xl font-display font-black mb-12 text-[var(--sea-ink)] drop-shadow-sm flex items-center gap-4 text-center z-10">
         <Trophy className="w-12 h-12 text-[var(--palm)]" />
         Today's Standings
       </h1>
 
       <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-12 gap-6 relative z-10">
-        {/* LEADER SECTION (Highlighted Bigger) */}
         <div className="md:col-span-12 mb-8 animate-in zoom-in duration-500">
           <div className="flex flex-col items-center">
-            {winnerDeclared && (
-              <h2 className="text-4xl font-display font-black text-[var(--palm)] mb-6 animate-pulse">
-                {isTie ? "IT'S A TIE!" : 'WE HAVE A WINNER!'}
-              </h2>
-            )}
+            <AnimatePresence>
+              {winnerDeclared && (
+                <motion.h2
+                  initial={{ opacity: 0, scale: 0.8, y: 14 }}
+                  animate={{ opacity: 1, scale: [1, 1.08, 1], y: 0 }}
+                  transition={{ duration: 0.65 }}
+                  className="text-4xl font-display font-black text-[var(--palm)] mb-6 flex items-center gap-2"
+                >
+                  <Sparkles className="w-9 h-9" />
+                  {isTie ? "IT'S A TIE!" : 'WE HAVE A WINNER!'}
+                  <Sparkles className="w-9 h-9" />
+                </motion.h2>
+              )}
+            </AnimatePresence>
 
-            <div
-              className={`flex flex-wrap justify-center gap-6 ${winnerDeclared ? 'scale-110 transition-transform duration-700' : ''}`}
+            <motion.div
+              animate={winnerDeclared ? { scale: [1, 1.12, 1.08] } : undefined}
+              transition={{ duration: 0.8 }}
+              className="flex flex-wrap justify-center gap-6"
             >
               {winners.map((winner) => (
                 <div
@@ -139,11 +227,10 @@ function TotalRoute() {
                   </div>
                 </div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
 
-        {/* REST OF THE PLAYERS */}
         {standings.length > winners.length && (
           <div className="md:col-span-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
             {standings.slice(winners.length).map((standing, index) => (
