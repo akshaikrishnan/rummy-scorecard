@@ -211,15 +211,15 @@ function ScoresRoute() {
             </Popover>
 
             {/* Add Score Drawer Trigger */}
-            <div className="ml-auto hidden sm:block">
+            <div className="ml-auto">
               <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerTrigger asChild>
                   <Button className="rounded-full px-6 bg-[var(--palm)] hover:bg-[var(--lagoon)] transition-all hidden sm:flex">
                     <Plus className="mr-2 h-4 w-4" /> Add Score
                   </Button>
                 </DrawerTrigger>
-                <DrawerContent>
-                  <div className="mx-auto w-full max-w-sm">
+                <DrawerContent className="max-h-[92dvh]">
+                  <div className="mx-auto flex w-full max-w-sm flex-1 flex-col overflow-hidden">
                     <DrawerHeader>
                       <DrawerTitle className="font-display text-2xl">
                         Record Game {games.length + 1}
@@ -227,57 +227,59 @@ function ScoresRoute() {
                     </DrawerHeader>
                     <form
                       onSubmit={handleSubmit(onSubmit)}
-                      className="p-4 pb-0 space-y-4"
+                      className="flex flex-1 flex-col overflow-hidden"
                     >
-                      {errors.root && (
-                        <p className="text-red-500 text-sm font-bold">
-                          {errors.root.message}
-                        </p>
-                      )}
+                      <div className="space-y-4 overflow-y-auto px-4 pb-4">
+                        {errors.root && (
+                          <p className="text-red-500 text-sm font-bold">
+                            {errors.root.message}
+                          </p>
+                        )}
 
-                      {selectedUsers.length < 2 && (
-                        <p className="text-amber-600 bg-amber-50 p-3 rounded-lg text-sm font-semibold">
-                          Please select at least 2 players from the filter
-                          before adding a score.
-                        </p>
-                      )}
+                        {selectedUsers.length < 2 && (
+                          <p className="text-amber-600 bg-amber-50 p-3 rounded-lg text-sm font-semibold">
+                            Please select at least 2 players from the filter
+                            before adding a score.
+                          </p>
+                        )}
 
-                      {selectedUsers.map((user) => (
-                        <div
-                          key={user.id}
-                          className="flex items-center justify-between border-b pb-4"
-                        >
-                          <Label
-                            htmlFor={`score-${user.id}`}
-                            className="text-lg flex items-center gap-2"
+                        {selectedUsers.map((user) => (
+                          <div
+                            key={user.id}
+                            className="flex items-center justify-between border-b pb-4"
                           >
-                            {user.imageUrl ? (
-                              <img
-                                src={user.imageUrl}
-                                className="w-8 h-8 rounded-full border border-gray-200"
-                                alt={user.name}
+                            <Label
+                              htmlFor={`score-${user.id}`}
+                              className="text-lg flex items-center gap-2"
+                            >
+                              {user.imageUrl ? (
+                                <img
+                                  src={user.imageUrl}
+                                  className="w-8 h-8 rounded-full border border-gray-200"
+                                  alt={user.name}
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-[var(--line)] flex items-center justify-center font-bold">
+                                  {user.name.charAt(0)}
+                                </div>
+                              )}
+                              {user.name}
+                            </Label>
+                            <div className="w-24">
+                              <Input
+                                id={`score-${user.id}`}
+                                type="number"
+                                min="0"
+                                max="80"
+                                className="text-center font-bold text-lg rounded-xl focus-visible:ring-[var(--palm)]"
+                                {...register(user.id, { valueAsNumber: true })}
                               />
-                            ) : (
-                              <div className="w-8 h-8 rounded-full bg-[var(--line)] flex items-center justify-center font-bold">
-                                {user.name.charAt(0)}
-                              </div>
-                            )}
-                            {user.name}
-                          </Label>
-                          <div className="w-24">
-                            <Input
-                              id={`score-${user.id}`}
-                              type="number"
-                              min="0"
-                              max="80"
-                              className="text-center font-bold text-lg rounded-xl focus-visible:ring-[var(--palm)]"
-                              {...register(user.id, { valueAsNumber: true })}
-                            />
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
 
-                      <DrawerFooter>
+                      <DrawerFooter className="border-t bg-background/95 pb-[max(env(safe-area-inset-bottom),1rem)]">
                         <Button
                           type="submit"
                           className="rounded-full py-6 text-lg tracking-wide"
