@@ -32,6 +32,10 @@ function TotalRoute() {
 
   const handleDeclareWinner = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    const audio = new Audio('/audio/winner.mp3')
+    audio
+      .play()
+      .catch((err) => console.error('Failed to play winner audio:', err))
     window.setTimeout(() => {
       setWinnerDeclared(true)
     }, 450)
@@ -120,6 +124,7 @@ function TotalRoute() {
           top: 0,
           left: 0,
           zIndex: 100,
+          animationDuration: '50s',
         }}
       />
 
@@ -134,7 +139,7 @@ function TotalRoute() {
             <motion.div
               className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,204,21,0.24),transparent_52%)]"
               animate={{ opacity: [0.2, 0.75, 0.25] }}
-              transition={{ duration: 1.1, repeat: 3 }}
+              transition={{ duration: 1.1, repeat: 12 }}
             />
             {[...Array(20)].map((_, idx) => (
               <motion.div
@@ -152,7 +157,7 @@ function TotalRoute() {
                 }}
                 transition={{
                   duration: 1.8,
-                  repeat: 2,
+                  repeat: 10,
                   delay: (idx % 5) * 0.08,
                 }}
               >
